@@ -1,9 +1,5 @@
 #include "VmbCamera.h"
 #include <cstdlib>
-#include <iostream>
-
-using std::cout;
-using std::endl;
 
 // Construtor
 VmbCamera::VmbCamera( const char* camera_id ) : id( camera_id ) {
@@ -33,7 +29,7 @@ void VmbCamera::Open() {
 
 // Close the camera
 void VmbCamera::Close() {
-	// Close the camera
+    // Close the camera
     VmbCameraClose( handle );
 }
 
@@ -61,29 +57,29 @@ void VmbCamera::StartCapture() {
 
 // Stop acquisition
 void VmbCamera::StopCapture() {
-	// Stop acquisition
-	VmbFeatureCommandRun( handle, "AcquisitionStop" );
-	// Flush the frame queue
-	VmbCaptureQueueFlush( handle );
-	// Stop capture engine
-	VmbCaptureEnd( handle );
-	// Revoke the frames
-	VmbFrameRevokeAll( handle );
-	// Free the frame buffer
-	for( int i=0; i<10 ; ++i ) {
+    // Stop acquisition
+    VmbFeatureCommandRun( handle, "AcquisitionStop" );
+    // Flush the frame queue
+    VmbCaptureQueueFlush( handle );
+    // Stop capture engine
+    VmbCaptureEnd( handle );
+    // Revoke the frames
+    VmbFrameRevokeAll( handle );
+    // Free the frame buffer
+    for( int i=0; i<10 ; ++i ) {
         delete [] (VmbUchar_t*)frames[i].buffer;
-	}
+    }
 }
 
 // The callback that gets executed on every filled frame
 void VMB_CALL VmbCamera::FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer ) {
-	// Check frame status
+    // Check frame status
     if( frame_pointer->receiveStatus == VmbFrameStatusComplete ) {
         // Get the camera object in the frame context
         VmbCamera* camera = (VmbCamera*)frame_pointer->context[0];
         // Emit the frame received signal
         emit camera->FrameReceived( frame_pointer );
     }
-	// Requeue the frame
+    // Requeue the frame
     VmbCaptureFrameQueue( camera_handle , frame_pointer , &FrameDoneCallback );
 }

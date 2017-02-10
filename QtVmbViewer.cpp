@@ -20,7 +20,7 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ), label( new QLab
     // Create the image
     image = new QImage( camera->width, camera->height, QImage::Format_Indexed8 );
     // Create a indexed color table
-    image->setColorCount(256);
+    image->setColorCount( 256 );
     for( int i = 0; i < 256; i++ ) {
         image->setColor( i, qRgb(i, i, i) );
     }
