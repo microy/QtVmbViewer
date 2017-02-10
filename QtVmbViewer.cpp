@@ -1,4 +1,4 @@
-#include "qtvmbviewer.h"
+#include "QtVmbViewer.h"
 #include <iostream>
 #include <QPixmap>
 #include <QVBoxLayout>
