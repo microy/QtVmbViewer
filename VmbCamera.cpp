@@ -38,7 +38,7 @@ void VmbCamera::StartCapture() {
     // Initialize the frame buffer
     for( int i=0; i<10 ; ++i ) {
         // Allocate accordingly
-        frames[i].buffer = (VmbUchar_t*)std::malloc( (VmbUint32_t)payloadsize );
+        frames[i].buffer = (VmbUchar_t*)malloc( (VmbUint32_t)payloadsize );
         frames[i].bufferSize = (VmbUint32_t)payloadsize;
         // Register this object in the frame context
         frames[i].context[0] = this;
@@ -67,7 +67,7 @@ void VmbCamera::StopCapture() {
     VmbFrameRevokeAll( handle );
     // Free the frame buffer
     for( int i=0; i<10 ; ++i ) {
-        std::free( frames[i].buffer );
+        free( frames[i].buffer );
     }
 }
 

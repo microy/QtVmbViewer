@@ -1,4 +1,5 @@
 #include "QtVmbViewer.h"
+#include <cstdlib>
 #include <iostream>
 #include <QPixmap>
 #include <QVBoxLayout>
@@ -43,7 +44,7 @@ QtVmbViewer::~QtVmbViewer() {
 // Image callback
 void QtVmbViewer::GetFrame( const VmbFrame_t* frame_pointer ) {
     // Copy the camera frame buffer to the Qt image
-    memcpy( image->bits(), frame_pointer->buffer, camera->height*camera->width );
+    memcpy( image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
     // Set the image to the label
     label->setPixmap( QPixmap::fromImage( *image ) );
     // Update the widget
