@@ -25,12 +25,21 @@ void VmbCamera::Open() {
     VmbFeatureIntGet( handle, "Width", &width );
     VmbFeatureIntGet( handle, "Height", &height );
     VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
+    // Create the Qt image
+    image = new QImage( width, height, QImage::Format_Indexed8 );
+    // Create a indexed color table
+    image->setColorCount( 256 );
+    for( int i = 0; i < 256; i++ ) {
+        image->setColor( i, qRgb(i, i, i) );
+    }
 }
 
 // Close the camera
 void VmbCamera::Close() {
     // Close the camera
     VmbCameraClose( handle );
+    // Delete the image
+    delete image;
 }
 
 // Start acquisition
@@ -77,8 +86,10 @@ void VMB_CALL VmbCamera::FrameDoneCallback( const VmbHandle_t camera_handle, Vmb
     if( frame_pointer->receiveStatus == VmbFrameStatusComplete ) {
         // Get the camera object in the frame context
         VmbCamera* camera = (VmbCamera*)frame_pointer->context[0];
+        // Copy the camera frame buffer to the Qt image
+        memcpy( camera->image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
         // Emit the frame received signal
-        emit camera->FrameReceived( frame_pointer );
+        emit camera->ImageReady();
     }
     // Requeue the frame
     VmbCaptureFrameQueue( camera_handle , frame_pointer , &FrameDoneCallback );

@@ -2,7 +2,6 @@
 #define QTVMBVIEWER_H
 
 #include <QWidget>
-#include <QImage>
 #include <QLabel>
 #include "VmbCamera.h"
 
@@ -20,15 +19,13 @@ class QtVmbViewer : public QWidget {
 
         // Label to display the camera image
         QLabel* label;
-        // The camera image
-        QImage* image;
         // Allied Vision camera
         VmbCamera* camera;
 
-    // Public slot
+    // Qt slots
     public slots :
-        // Slot to receive the frame from the camera
-        void GetFrame( const VmbFrame_t* frame_pointer );
+        // Slot to receive the image from the camera and update the widget
+        void UpdateImage();
 };
 
 #endif // QTVMBVIEWER_H

@@ -1,6 +1,4 @@
 #include "QtVmbViewer.h"
-#include <cstdlib>
-#include <iostream>
 #include <QPixmap>
 #include <QVBoxLayout>
 
@@ -15,16 +13,9 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ), label( new QLab
     // Create the camera
     camera = new VmbCamera( "50-0503323406" );
     // Connect the camera signal to get the received frame
-    connect( camera, &VmbCamera::FrameReceived, this, &QtVmbViewer::GetFrame );
+    connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
     // Open the camera
     camera->Open();
-    // Create the image
-    image = new QImage( camera->width, camera->height, QImage::Format_Indexed8 );
-    // Create a indexed color table
-    image->setColorCount( 256 );
-    for( int i = 0; i < 256; i++ ) {
-        image->setColor( i, qRgb(i, i, i) );
-    }
     // Start acquisition
     camera->StartCapture();
 }
@@ -37,16 +28,12 @@ QtVmbViewer::~QtVmbViewer() {
     camera->Close();
     // Delete the camera
     delete camera;
-    // Delete the image
-    delete image;
 }
 
 // Image callback
-void QtVmbViewer::GetFrame( const VmbFrame_t* frame_pointer ) {
-    // Copy the camera frame buffer to the Qt image
-    memcpy( image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
+void QtVmbViewer::UpdateImage() {
     // Set the image to the label
-    label->setPixmap( QPixmap::fromImage( *image ) );
+    label->setPixmap( QPixmap::fromImage( *camera->image ) );
     // Update the widget
     label->update();
 }
