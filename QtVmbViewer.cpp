@@ -42,17 +42,8 @@ QtVmbViewer::~QtVmbViewer() {
 
 // Image callback
 void QtVmbViewer::GetFrame( const VmbFrame_t* frame_pointer ) {
-    // Copy the camera frame to the widget image
-    VmbUchar_t* pCursor = image->bits();
-    VmbUchar_t* pInBuffer = (VmbUchar_t*)frame_pointer->buffer;
-    for( int y=0; y<camera->height; ++y ) {
-        pCursor = image->scanLine( y );
-        for( int x=0; x<camera->width; ++x ) {
-            *pCursor = *pInBuffer;
-            ++pCursor;
-            ++pInBuffer;
-        }
-    }
+    // Copy the camera frame buffer to the Qt image
+    memcpy( image->bits(), frame_pointer->buffer, camera->height*camera->width );
     // Set the image to the label
     label->setPixmap( QPixmap::fromImage( *image ) );
     // Update the widget
