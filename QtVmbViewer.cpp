@@ -33,7 +33,7 @@ QtVmbViewer::~QtVmbViewer() {
 // Image callback
 void QtVmbViewer::UpdateImage() {
     // Set the image to the label
-    label->setPixmap( QPixmap::fromImage( *camera->image ) );
+    label->setPixmap( QPixmap::fromImage( *camera->image ).scaled( camera->width*0.3, camera->height*0.3, Qt::KeepAspectRatio ) );
     // Update the widget
     label->update();
 }
