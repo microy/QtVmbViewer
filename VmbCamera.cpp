@@ -25,25 +25,23 @@ void VmbCamera::Open() {
     VmbFeatureIntGet( handle, "Width", &width );
     VmbFeatureIntGet( handle, "Height", &height );
     VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
-    // Create the Qt image
-    image = new QImage( width, height, QImage::Format_Indexed8 );
-    // Create a indexed color table
-    image->setColorCount( 256 );
-    for( int i = 0; i < 256; i++ ) {
-        image->setColor( i, qRgb(i, i, i) );
-    }
 }
 
 // Close the camera
 void VmbCamera::Close() {
     // Close the camera
     VmbCameraClose( handle );
-    // Delete the image
-    delete image;
 }
 
 // Start acquisition
 void VmbCamera::StartCapture() {
+    // Create the Qt image (grayscale)
+    image = new QImage( width, height, QImage::Format_Indexed8 );
+    // Create an indexed color table for the QImage
+    image->setColorCount( 256 );
+    for( int i = 0; i < 256; i++ ) {
+        image->setColor( i, qRgb(i, i, i) );
+    }
     // Initialize the frame buffer
     for( int i=0; i<10 ; ++i ) {
         // Allocate accordingly
@@ -78,6 +76,8 @@ void VmbCamera::StopCapture() {
     for( int i=0; i<10 ; ++i ) {
         free( frames[i].buffer );
     }
+    // Delete the image
+    delete image;
 }
 
 // The callback that gets executed on every filled frame
