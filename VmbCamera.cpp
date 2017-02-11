@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 // Construtor
-VmbCamera::VmbCamera( const char* camera_id ) : id( camera_id ) {
+VmbCamera::VmbCamera(const char* camera_id , int frame_buffer_size) : id( camera_id ), frame_buffer_size( frame_buffer_size ) {
     // Initialize Vimba
     VmbStartup();
     // Send discovery packet to GigE cameras
@@ -43,20 +43,22 @@ void VmbCamera::StartCapture() {
         image->setColor( i, qRgb(i, i, i) );
     }
     // Initialize the frame buffer
-    for( int i=0; i<10 ; ++i ) {
+    frame_buffer = (VmbFrame_t*)malloc( frame_buffer_size * sizeof(VmbFrame_t) );
+    // Allocate and announce the frames
+    for( int i=0; i<frame_buffer_size ; i++ ) {
         // Allocate accordingly
-        frames[i].buffer = (VmbUchar_t*)malloc( (VmbUint32_t)payloadsize );
-        frames[i].bufferSize = (VmbUint32_t)payloadsize;
+        frame_buffer[i].buffer = (VmbUchar_t*)malloc( (VmbUint32_t)payloadsize );
+        frame_buffer[i].bufferSize = (VmbUint32_t)payloadsize;
         // Register this object in the frame context
-        frames[i].context[0] = this;
+        frame_buffer[i].context[0] = this;
         // Announce the frame
-        VmbFrameAnnounce( handle, &frames[i], sizeof( VmbFrame_t ) );
+        VmbFrameAnnounce( handle, &frame_buffer[i], sizeof( VmbFrame_t ) );
     }
     // Start capture engine
     VmbCaptureStart( handle );
     // Queue frames and register callback
-    for( int i=0; i<10; ++i ) {
-        VmbCaptureFrameQueue( handle, &frames[i], &FrameDoneCallback );
+    for( int i=0; i<frame_buffer_size; i++ ) {
+        VmbCaptureFrameQueue( handle, &frame_buffer[i], &FrameDoneCallback );
     }
     // Start acquisition
     VmbFeatureCommandRun( handle, "AcquisitionStart" );
@@ -73,9 +75,10 @@ void VmbCamera::StopCapture() {
     // Revoke the frames
     VmbFrameRevokeAll( handle );
     // Free the frame buffer
-    for( int i=0; i<10 ; ++i ) {
-        free( frames[i].buffer );
+    for( int i=0; i<frame_buffer_size ; i++ ) {
+        free( frame_buffer[i].buffer );
     }
+    free( frame_buffer );
     // Delete the image
     delete image;
 }
@@ -88,7 +91,7 @@ void VMB_CALL VmbCamera::FrameDoneCallback( const VmbHandle_t camera_handle, Vmb
         VmbCamera* camera = (VmbCamera*)frame_pointer->context[0];
         // Copy the camera frame buffer to the Qt image
         memcpy( camera->image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
-        // Emit the frame received signal
+        // Emit the image ready signal
         emit camera->ImageReady();
     }
     // Requeue the frame

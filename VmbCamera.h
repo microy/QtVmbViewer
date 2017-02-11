@@ -17,7 +17,7 @@ class VmbCamera : public QObject {
     // Public members
     public :
         // Construtor
-        VmbCamera( const char* camera_id );
+        VmbCamera( const char* camera_id, int frame_buffer_size=10 );
         // Destructor
         ~VmbCamera();
 
@@ -41,7 +41,8 @@ class VmbCamera : public QObject {
         VmbInt64_t height;
         VmbInt64_t payloadsize;
         // Frame buffer
-        VmbFrame_t frames[10];
+        int frame_buffer_size;
+        VmbFrame_t* frame_buffer;
         // Current camera image
         QImage* image;
 
