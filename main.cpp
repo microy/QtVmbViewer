@@ -1,10 +1,9 @@
 #include "QtVmbViewer.h"
 #include <QApplication>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    QtVmbViewer w;
-    w.show();
-    return a.exec();
+int main(int argc, char *argv[]) {
+	QApplication a(argc, argv);
+	QtVmbViewer w;
+	w.show();
+	return a.exec();
 }
