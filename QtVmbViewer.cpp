@@ -1,7 +1,6 @@
 #include "QtVmbViewer.h"
 #include <QPixmap>
 #include <QVBoxLayout>
-#include <iostream>
 
 // Constructor
 QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),

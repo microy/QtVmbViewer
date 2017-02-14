@@ -1,6 +1,5 @@
 #include "VmbCamera.h"
 #include <cstdlib>
-#include <iostream>
 
 // Construtor
 VmbCamera::VmbCamera(const char* camera_id , int frame_buffer_size) : id( camera_id ), frame_buffer_size( frame_buffer_size ) {
