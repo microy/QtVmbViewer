@@ -1,5 +1,6 @@
 #include "VmbCamera.h"
 #include <cstdlib>
+#include <iostream>
 
 // Construtor
 VmbCamera::VmbCamera(const char* camera_id , int frame_buffer_size) : id( camera_id ), frame_buffer_size( frame_buffer_size ) {
@@ -25,12 +26,22 @@ void VmbCamera::Open() {
 	VmbFeatureIntGet( handle, "Width", &width );
 	VmbFeatureIntGet( handle, "Height", &height );
 	VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
+	// Get camera exposure parameters
+	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
+	VmbFeatureFloatRangeQuery( handle, "ExposureTimeAbs", &exposure_min, &exposure_max );
 }
+
 
 // Close the camera
 void VmbCamera::Close() {
 	// Close the camera
 	VmbCameraClose( handle );
+}
+
+// Set the camera exposure time in microseconds
+void VmbCamera::SetExposure( double exposure_time ) {
+	exposure = exposure_time;
+	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
 }
 
 // Start acquisition

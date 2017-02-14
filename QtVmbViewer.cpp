@@ -1,14 +1,17 @@
 #include "QtVmbViewer.h"
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <iostream>
 
 // Constructor
-QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ), label( new QLabel ) {
+QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
+	label( new QLabel ), slider( new QSlider(Qt::Horizontal) ) {
 	// Scale the image label
 	label->setScaledContents( true );
 	// Widget layout
 	QVBoxLayout* layout = new QVBoxLayout( this );
 	layout->addWidget( label );
+	layout->addWidget( slider );
 	layout->setSizeConstraint( QLayout::SetFixedSize );
 	// Create the camera
 	camera = new VmbCamera( "50-0503323406" );
@@ -16,6 +19,12 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ), label( new QLab
 	connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
 	// Open the camera
 	camera->Open();
+	// Setup the slider according the camera exposure parameters
+	slider->setRange( camera->exposure_min, camera->exposure_max );
+	slider->setValue( camera->exposure );
+	slider->update();
+	// Connect the slider released signal to set the new camera exposure value
+	connect( slider, &QSlider::sliderReleased, this, &QtVmbViewer::SetExposure );
 	// Start acquisition
 	camera->StartCapture();
 }
@@ -38,3 +47,7 @@ void QtVmbViewer::UpdateImage() {
 	label->update();
 }
 
+// Slot to update the camera exposure
+void QtVmbViewer::SetExposure() {
+	camera->SetExposure( slider->value() );
+}

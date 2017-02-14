@@ -29,6 +29,8 @@ class VmbCamera : public QObject {
 		void StartCapture();
 		// Stop the acquisition
 		void StopCapture();
+		// Set the camera exposure value (in microseconds)
+		void SetExposure( double exposure );
 		// Function called by Vimba to receive the frame
 		static void VMB_CALL FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer );
 
@@ -40,6 +42,10 @@ class VmbCamera : public QObject {
 		VmbInt64_t width;
 		VmbInt64_t height;
 		VmbInt64_t payloadsize;
+		// Exposure parameters
+		double exposure;
+		double exposure_min;
+		double exposure_max;
 		// Frame buffer
 		int frame_buffer_size;
 		VmbFrame_t* frame_buffer;
