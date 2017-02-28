@@ -38,7 +38,6 @@ class QtVmbViewer : public QLabel {
 		VmbInt64_t height;
 		VmbInt64_t payloadsize;
 		// Frame buffer
-		int frame_buffer_size;
 		VmbFrame_t* frame_buffer;
 		// Current camera image
 		QImage* image;

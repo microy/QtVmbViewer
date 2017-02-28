@@ -1,10 +1,11 @@
 #include "QtVmbViewer.h"
 #include <QPixmap>
 
+// Setup the frame buffer size
+static const int frame_buffer_size = 10;
+
 // Constructor
 QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
-	// Setup the frame buffer size
-	frame_buffer_size = 10;
 	// Initialize Vimba
 	VmbStartup();
 	// Send discovery packet to GigE cameras
