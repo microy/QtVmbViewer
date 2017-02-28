@@ -20,7 +20,7 @@ class QtVmbViewer : public QLabel {
 		~QtVmbViewer();
 
 		// Open the camera
-		void Open( const char* camera_id );
+		void Open();
 		// Close the camera
 		void Close();
 		// Start the acquisition

@@ -1,6 +1,9 @@
 #include "QtVmbViewer.h"
 #include <QPixmap>
 
+// Camera identification number
+static const char* camera_id =  "50-0503323406";
+
 // Setup the frame buffer size
 static const int frame_buffer_size = 10;
 
@@ -13,7 +16,7 @@ QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
 	// Send discovery packet to GigE cameras
 	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
 	// Open the camera
-	Open( "50-0503323406" );
+	Open();
 	// Start acquisition
 	StartCapture();
 }
@@ -29,7 +32,7 @@ QtVmbViewer::~QtVmbViewer() {
 }
 
 // Open the camera
-void QtVmbViewer::Open( const char* camera_id ) {
+void QtVmbViewer::Open() {
 	// Connect to the camera
 	VmbCameraOpen( camera_id, VmbAccessModeFull, &handle );
 	// Adjust packet size automatically
