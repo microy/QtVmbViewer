@@ -6,12 +6,12 @@ static const int frame_buffer_size = 10;
 
 // Constructor
 QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
+	// Connect the ImageReady signal with the UpdateImage slot to get newly received images
+	connect( this, &QtVmbViewer::ImageReady, this, &QtVmbViewer::UpdateImage );
 	// Initialize Vimba
 	VmbStartup();
 	// Send discovery packet to GigE cameras
 	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
-	// Connect the camera signal to get newly received images
-	connect( this, &QtVmbViewer::ImageReady, this, &QtVmbViewer::UpdateImage );
 	// Open the camera
 	Open( "50-0503323406" );
 	// Start acquisition
