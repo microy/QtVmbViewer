@@ -1,5 +1,6 @@
 #include "QtVmbViewer.h"
 #include <QPixmap>
+#include <cstdio>
 
 // Camera identification number
 static const char* camera_id =  "50-0503323406";
@@ -25,6 +26,8 @@ QtVmbViewer::~QtVmbViewer() {
 
 // Open the camera
 void QtVmbViewer::Open() {
+	// List the cameras
+	ListCameras();
 	// Connect to the camera
 	VmbCameraOpen( camera_id, VmbAccessModeFull, &handle );
 	// Adjust packet size automatically
@@ -89,6 +92,57 @@ void QtVmbViewer::StopCapture() {
 	free( frame_buffer );
 	// Delete the image
 	delete image;
+}
+
+// List the cameras
+const char* QtVmbViewer::ListCameras() {
+	VmbError_t          err             = VmbErrorSuccess;
+	VmbCameraInfo_t *   pCameras        = NULL;
+	VmbUint32_t         i               = 0;
+	VmbUint32_t         nCount          = 0;
+	VmbUint32_t         nFoundCount     = 0;
+	// Get the amount of known cameras
+	err = VmbCamerasList( NULL, 0, &nCount, sizeof *pCameras );
+	if( VmbErrorSuccess == err && nCount != 0 ) {
+		printf( "Cameras found: %d\n\n", nCount );
+		pCameras = (VmbCameraInfo_t*)malloc( sizeof *pCameras * nCount );
+		if( NULL != pCameras ) {
+			// Query all static details of all known cameras without having to open the cameras
+			err = VmbCamerasList( pCameras, nCount, &nFoundCount, sizeof *pCameras );
+			if( VmbErrorSuccess == err ||  VmbErrorMoreData == err ) {
+				// If a new camera was connected since we queried
+				// the amount of cameras, we can ignore that one
+				if( nFoundCount < nCount) {
+					nCount = nFoundCount;
+				}
+				// And print them out
+				for ( i=0; i<nCount; ++i ) {
+					printf( "/// Camera Name: %s\n/// Model Name: %s\n/// Camera ID: %s\n/// Serial Number: %s\n/// @ Interface ID: %s\n\n\n",
+						pCameras[i].cameraName,
+						pCameras[i].modelName,
+						pCameras[i].cameraIdString,
+						pCameras[i].serialString,
+						pCameras[i].interfaceIdString );
+				}
+				// Use the first camera
+				if( nFoundCount != 0) {
+					return pCameras[0].cameraIdString;
+				}
+			}
+			else {
+				printf( "Could not retrieve camera list. Error code: %d\n", err );
+			}
+			free( pCameras );
+			pCameras = NULL;
+		}
+		else {
+			printf( "Could not allocate camera list.\n" );
+		}
+	}
+	else {
+		printf( "Could not list cameras or no cameras present. Error code: %d\n", err );
+	}
+	return NULL;
 }
 
 // The callback that gets executed on every filled frame

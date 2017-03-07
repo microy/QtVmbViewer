@@ -28,6 +28,9 @@ class QtVmbViewer : public QLabel {
 		// Stop the acquisition
 		void StopCapture();
 
+		// List the cameras and return the ID number of the first camera
+		const char *ListCameras();
+
 		// Function called by Vimba to receive the frame
 		static void VMB_CALL FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer );
 
