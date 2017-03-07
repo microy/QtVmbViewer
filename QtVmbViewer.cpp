@@ -15,18 +15,10 @@ QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
 	VmbStartup();
 	// Send discovery packet to GigE cameras
 	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
-	// Open the camera
-	Open();
-	// Start acquisition
-	StartCapture();
 }
 
 // Destructor
 QtVmbViewer::~QtVmbViewer() {
-	// Stop acquisition
-	StopCapture();
-	// Close the camera
-	Close();
 	// Shutdown Vimba
 	VmbShutdown();
 }
