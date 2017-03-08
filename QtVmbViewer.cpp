@@ -27,9 +27,14 @@ QtVmbViewer::~QtVmbViewer() {
 // Open the camera
 void QtVmbViewer::Open() {
 	// List the cameras
-	ListCameras();
+//	ListCameras();
+	// Query all static details of the first known camera
+	VmbCameraInfo_t camera;
+	VmbUint32_t count;
+	VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
 	// Connect to the camera
-	VmbCameraOpen( camera_id, VmbAccessModeFull, &handle );
+//	VmbCameraOpen( camera_id, VmbAccessModeFull, &handle );
+	VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
 	// Adjust packet size automatically
 	VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
 	// Get image parameters
