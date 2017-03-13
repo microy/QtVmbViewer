@@ -18,9 +18,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    VmbCamera.cpp \
     QtVmbViewer.cpp
 
 HEADERS  += \
-    VmbCamera.h \
     QtVmbViewer.h
