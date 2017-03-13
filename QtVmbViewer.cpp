@@ -1,6 +1,5 @@
 #include "QtVmbViewer.h"
 #include <QPixmap>
-#include <cstdio>
 
 // Constructor
 QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
