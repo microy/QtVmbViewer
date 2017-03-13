@@ -2,9 +2,6 @@
 #include <QPixmap>
 #include <cstdio>
 
-// Setup the frame buffer size
-static const int frame_buffer_size = 10;
-
 // Constructor
 QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
 	// Connect the ImageReady signal with the UpdateImage slot to get newly received images

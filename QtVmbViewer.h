@@ -37,6 +37,8 @@ class QtVmbViewer : public QLabel {
 		VmbInt64_t width;
 		VmbInt64_t height;
 		VmbInt64_t payloadsize;
+		// Frame buffer size
+		static const int frame_buffer_size = 10;
 		// Frame buffer
 		VmbFrame_t* frame_buffer;
 		// Current camera image
