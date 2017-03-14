@@ -20,9 +20,9 @@ class VmbCamera : public QObject {
 		~VmbCamera();
 
 		// Start the acquisition
-		void StartCapture();
+		void StartCapture() const;
 		// Stop the acquisition
-		void StopCapture();
+		void StopCapture() const;
 
 		// Get the camera exposure value (in microseconds)
 		double Exposure() const;
@@ -38,10 +38,6 @@ class VmbCamera : public QObject {
 	private :
 		// Handle to the camera
 		VmbHandle_t handle;
-		// Image parameters
-		VmbInt64_t width;
-		VmbInt64_t height;
-		VmbInt64_t payloadsize;
 		// Frame buffer size
 		static const int frame_buffer_size = 10;
 		// Frame buffer

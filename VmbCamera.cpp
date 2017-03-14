@@ -15,9 +15,29 @@ VmbCamera::VmbCamera() {
 	// Adjust packet size automatically
 	VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
 	// Get image parameters
+	VmbInt64_t width;
+	VmbInt64_t height;
+	VmbInt64_t payload_size;
 	VmbFeatureIntGet( handle, "Width", &width );
 	VmbFeatureIntGet( handle, "Height", &height );
-	VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
+	VmbFeatureIntGet( handle, "PayloadSize", &payload_size );
+	// Create the Qt image (grayscale)
+	image = new QImage( width, height, QImage::Format_Indexed8 );
+	// Create an indexed color table for the Qt image
+	image->setColorCount( 256 );
+	for( int i = 0; i < 256; i++ ) {
+		image->setColor( i, qRgb(i, i, i) );
+	}
+	// Initialize the frame buffer
+	frame_buffer = (VmbFrame_t*)malloc( frame_buffer_size * sizeof(VmbFrame_t) );
+	// Allocate the frames
+	for( int i=0; i<frame_buffer_size ; i++ ) {
+		// Allocate accordingly
+		frame_buffer[i].buffer = (VmbUchar_t*)malloc( (VmbUint32_t)payload_size );
+		frame_buffer[i].bufferSize = (VmbUint32_t)payload_size;
+		// Register this object in the frame context
+		frame_buffer[i].context[0] = this;
+	}
 }
 
 // Destructor
@@ -26,27 +46,19 @@ VmbCamera::~VmbCamera() {
 	VmbCameraClose( handle );
 	// Shutdown Vimba
 	VmbShutdown();
+	// Free the frame buffer
+	for( int i=0; i<frame_buffer_size ; i++ ) {
+		free( frame_buffer[i].buffer );
+	}
+	free( frame_buffer );
+	// Delete the Qt image
+	delete image;
 }
 
 // Start acquisition
 void VmbCamera::StartCapture() {
-	// Create the Qt image (grayscale)
-	image = new QImage( width, height, QImage::Format_Indexed8 );
-	// Create an indexed color table for the QImage
-	image->setColorCount( 256 );
-	for( int i = 0; i < 256; i++ ) {
-		image->setColor( i, qRgb(i, i, i) );
-	}
-	// Initialize the frame buffer
-	frame_buffer = (VmbFrame_t*)malloc( frame_buffer_size * sizeof(VmbFrame_t) );
-	// Allocate and announce the frames
+	// Announce the frames
 	for( int i=0; i<frame_buffer_size ; i++ ) {
-		// Allocate accordingly
-		frame_buffer[i].buffer = (VmbUchar_t*)malloc( (VmbUint32_t)payloadsize );
-		frame_buffer[i].bufferSize = (VmbUint32_t)payloadsize;
-		// Register this object in the frame context
-		frame_buffer[i].context[0] = this;
-		// Announce the frame
 		VmbFrameAnnounce( handle, &frame_buffer[i], sizeof( VmbFrame_t ) );
 	}
 	// Start capture engine
@@ -69,13 +81,6 @@ void VmbCamera::StopCapture() {
 	VmbCaptureEnd( handle );
 	// Revoke the frames
 	VmbFrameRevokeAll( handle );
-	// Free the frame buffer
-	for( int i=0; i<frame_buffer_size ; i++ ) {
-		free( frame_buffer[i].buffer );
-	}
-	free( frame_buffer );
-	// Delete the image
-	delete image;
 }
 
 // Get the camera exposure time in microseconds
