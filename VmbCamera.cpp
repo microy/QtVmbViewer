@@ -95,6 +95,11 @@ void VmbCamera::SetExposure( double exposure ) const {
 	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
 }
 
+// Get the camera image
+const QImage* Image() const {
+	return image;
+}
+
 // The callback that gets executed on every filled frame
 void VMB_CALL VmbCamera::FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer ) {
 	// Check frame status

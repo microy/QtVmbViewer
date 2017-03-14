@@ -30,9 +30,7 @@ class VmbCamera : public QObject {
 		void SetExposure( double exposure ) const;
 
 		// Get the camera image
-		const QImage* Image() const {
-			return image;
-		}
+		const QImage* Image() const;
 
 	// Private members
 	private :
