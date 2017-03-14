@@ -37,7 +37,7 @@ class VmbCamera : public QObject {
 		// Handle to the camera
 		VmbHandle_t handle;
 		// Frame buffer size
-		static const int frame_buffer_size = 10;
+		static const int frame_buffer_size;
 		// Frame buffer
 		VmbFrame_t* frame_buffer;
 		// Current camera image

@@ -1,5 +1,8 @@
 #include "VmbCamera.h"
 
+// Frame buffer size
+const int VmbCamera::frame_buffer_size = 5;
+
 // Construtor
 VmbCamera::VmbCamera() {
 	// Initialize Vimba
