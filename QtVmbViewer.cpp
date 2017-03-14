@@ -14,7 +14,7 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
 	layout->setSizeConstraint( QLayout::SetFixedSize );
 	// Setup the slider according the camera exposure parameters
 	slider->setRange( 64, 10000 );
-	slider->setValue( camera->GetExposure() );
+	slider->setValue( camera->Exposure() );
 	slider->update();
 	// Connect the camera signal to get newly received images
 	connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
@@ -35,7 +35,9 @@ QtVmbViewer::~QtVmbViewer() {
 // Slot to get a new image from the camera and update the widget
 void QtVmbViewer::UpdateImage() {
 	// Set the image to the label
-	label->setPixmap( QPixmap::fromImage( *camera->image ).scaled( camera->width*0.3, camera->height*0.3, Qt::KeepAspectRatio ) );
+	label->setPixmap( QPixmap::fromImage( *camera->Image() ) );
+	// Scale the label
+	label->resize( 0.3 * label->pixmap()->size() );
 	// Update the widget
 	label->update();
 }
