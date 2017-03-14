@@ -79,14 +79,14 @@ void VmbCamera::StopCapture() {
 }
 
 // Get the camera exposure time in microseconds
-double VmbCamera::GetExposure() {
+double VmbCamera::Exposure() const {
 	double exposure;
 	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
 	return exposure;
 }
 
 // Set the camera exposure time in microseconds
-void VmbCamera::SetExposure( double exposure ) {
+void VmbCamera::SetExposure( double exposure ) const {
 	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
 }
 
