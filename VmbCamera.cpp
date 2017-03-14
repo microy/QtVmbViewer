@@ -28,9 +28,6 @@ void VmbCamera::Open() {
 	VmbFeatureIntGet( handle, "Width", &width );
 	VmbFeatureIntGet( handle, "Height", &height );
 	VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
-	// Get camera exposure parameters
-	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
-	VmbFeatureFloatRangeQuery( handle, "ExposureTimeAbs", &exposure_min, &exposure_max );
 }
 
 // Close the camera
@@ -39,9 +36,15 @@ void VmbCamera::Close() {
 	VmbCameraClose( handle );
 }
 
+// Get the camera exposure time in microseconds
+double VmbCamera::GetExposure() {
+	double exposure;
+	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
+	return exposure;
+}
+
 // Set the camera exposure time in microseconds
-void VmbCamera::SetExposure( double exposure_time ) {
-	exposure = exposure_time;
+void VmbCamera::SetExposure( double exposure ) {
 	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
 }
 
