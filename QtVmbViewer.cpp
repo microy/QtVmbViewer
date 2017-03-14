@@ -1,21 +1,28 @@
 #include "QtVmbViewer.h"
+
+// Qt dependencies
 #include <QPixmap>
 #include <QVBoxLayout>
 
 // Constructor
-QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
-	label( new QLabel ), slider( new QSlider(Qt::Horizontal) ), camera( new VmbCamera ) {
+QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ) {
+	// Initialize the Vimba camera
+	camera = new VmbCamera();
+	// Create a Qt label to display the image
+	label = new QLabel();
 	// Scale the image label
 	label->setScaledContents( true );
+	// Create a Qt slider to change the camera exposure
+	slider = new QSlider( Qt::Horizontal );
+	// Setup the slider according the camera exposure parameters
+	slider->setRange( 64, 10000 );
+	slider->setValue( camera->Exposure() );
+	slider->update();
 	// Widget layout
 	QVBoxLayout* layout = new QVBoxLayout( this );
 	layout->addWidget( label );
 	layout->addWidget( slider );
 	layout->setSizeConstraint( QLayout::SetFixedSize );
-	// Setup the slider according the camera exposure parameters
-	slider->setRange( 64, 10000 );
-	slider->setValue( camera->Exposure() );
-	slider->update();
 	// Connect the camera signal to get newly received images
 	connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
 	// Connect the slider released signal to set the new camera exposure value
@@ -28,7 +35,7 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
 QtVmbViewer::~QtVmbViewer() {
 	// Stop acquisition
 	camera->StopCapture();
-	// Delete the camera
+	// Release the camera
 	delete camera;
 }
 
