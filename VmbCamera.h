@@ -19,18 +19,16 @@ class VmbCamera : public QObject {
 		// Destructor
 		~VmbCamera();
 
-		// Open the camera
-		void Open();
-		// Close the camera
-		void Close();
 		// Start the acquisition
 		void StartCapture();
 		// Stop the acquisition
 		void StopCapture();
+
 		// Get the camera exposure value (in microseconds)
 		double GetExposure();
 		// Set the camera exposure value (in microseconds)
 		void SetExposure( double exposure );
+		
 		// Function called by Vimba to receive the frame
 		static void VMB_CALL FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer );
 

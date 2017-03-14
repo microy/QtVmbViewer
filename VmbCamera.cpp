@@ -6,16 +6,6 @@ VmbCamera::VmbCamera() {
 	VmbStartup();
 	// Send discovery packet to GigE cameras
 	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
-}
-
-// Destructor
-VmbCamera::~VmbCamera() {
-	// Shutdown Vimba
-	VmbShutdown();
-}
-
-// Open the camera
-void VmbCamera::Open() {
 	// Get the first known camera
 	VmbCameraInfo_t camera;
 	VmbUint32_t count;
@@ -30,22 +20,12 @@ void VmbCamera::Open() {
 	VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
 }
 
-// Close the camera
-void VmbCamera::Close() {
+// Destructor
+VmbCamera::~VmbCamera() {
 	// Close the camera
 	VmbCameraClose( handle );
-}
-
-// Get the camera exposure time in microseconds
-double VmbCamera::GetExposure() {
-	double exposure;
-	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
-	return exposure;
-}
-
-// Set the camera exposure time in microseconds
-void VmbCamera::SetExposure( double exposure ) {
-	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
+	// Shutdown Vimba
+	VmbShutdown();
 }
 
 // Start acquisition
@@ -96,6 +76,18 @@ void VmbCamera::StopCapture() {
 	free( frame_buffer );
 	// Delete the image
 	delete image;
+}
+
+// Get the camera exposure time in microseconds
+double VmbCamera::GetExposure() {
+	double exposure;
+	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
+	return exposure;
+}
+
+// Set the camera exposure time in microseconds
+void VmbCamera::SetExposure( double exposure ) {
+	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
 }
 
 // The callback that gets executed on every filled frame

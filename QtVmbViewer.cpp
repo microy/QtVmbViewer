@@ -14,8 +14,6 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
 	layout->setSizeConstraint( QLayout::SetFixedSize );
 	// Create the camera
 	camera = new VmbCamera();
-	// Open the camera
-	camera->Open();
 	// Setup the slider according the camera exposure parameters
 	slider->setRange( 64, 10000 );
 	slider->setValue( camera->GetExposure() );
@@ -32,8 +30,6 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
 QtVmbViewer::~QtVmbViewer() {
 	// Stop acquisition
 	camera->StopCapture();
-	// Close the camera
-	camera->Close();
 	// Delete the camera
 	delete camera;
 }
