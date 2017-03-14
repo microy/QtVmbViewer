@@ -28,13 +28,13 @@ VmbCamera::VmbCamera() {
 	image = new QImage( width, height, QImage::Format_Indexed8 );
 	// Create an indexed color table for the Qt image
 	image->setColorCount( 256 );
-	for( int i = 0; i < 256; i++ ) {
+	for( int i=0; i<256; i++ ) {
 		image->setColor( i, qRgb(i, i, i) );
 	}
 	// Initialize the frame buffer
 	frame_buffer = (VmbFrame_t*)malloc( frame_buffer_size * sizeof(VmbFrame_t) );
 	// Allocate the frames
-	for( int i=0; i<frame_buffer_size ; i++ ) {
+	for( int i=0; i<frame_buffer_size; i++ ) {
 		// Allocate accordingly
 		frame_buffer[i].buffer = (VmbUchar_t*)malloc( (VmbUint32_t)payload_size );
 		frame_buffer[i].bufferSize = (VmbUint32_t)payload_size;
@@ -50,7 +50,7 @@ VmbCamera::~VmbCamera() {
 	// Shutdown Vimba
 	VmbShutdown();
 	// Free the frame buffer
-	for( int i=0; i<frame_buffer_size ; i++ ) {
+	for( int i=0; i<frame_buffer_size; i++ ) {
 		free( frame_buffer[i].buffer );
 	}
 	free( frame_buffer );
@@ -61,7 +61,7 @@ VmbCamera::~VmbCamera() {
 // Start acquisition
 void VmbCamera::StartCapture() {
 	// Announce the frames
-	for( int i=0; i<frame_buffer_size ; i++ ) {
+	for( int i=0; i<frame_buffer_size; i++ ) {
 		VmbFrameAnnounce( handle, &frame_buffer[i], sizeof( VmbFrame_t ) );
 	}
 	// Start capture engine
