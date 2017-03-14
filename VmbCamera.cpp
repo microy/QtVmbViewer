@@ -1,50 +1,12 @@
-#include "QtVmbViewer.h"
-#include <QPixmap>
+#include "VmbCamera.h"
 
-// Constructor
-<<<<<<< HEAD
-QtVmbViewer::QtVmbViewer( QWidget* parent ) : QLabel( parent ) {
-	// Connect the ImageReady signal with the UpdateImage slot to get newly received images
-	connect( this, &QtVmbViewer::ImageReady, this, &QtVmbViewer::UpdateImage );
+// Construtor
+VmbCamera::VmbCamera() {
 	// Initialize Vimba
 	VmbStartup();
 	// Send discovery packet to GigE cameras
 	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
-=======
-QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
-	label( new QLabel ), slider( new QSlider(Qt::Horizontal) ) {
-	// Scale the image label
-	label->setScaledContents( true );
-	// Widget layout
-	QVBoxLayout* layout = new QVBoxLayout( this );
-	layout->addWidget( label );
-	layout->addWidget( slider );
-	layout->setSizeConstraint( QLayout::SetFixedSize );
-	// Create the camera
-	camera = new VmbCamera();
-	// Setup the slider according the camera exposure parameters
-	slider->setRange( 64, 10000 );
-	slider->setValue( camera->GetExposure() );
-	slider->update();
-	// Connect the camera signal to get newly received images
-	connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
-	// Connect the slider released signal to set the new camera exposure value
-	connect( slider, &QSlider::sliderReleased, this, &QtVmbViewer::SetExposure );
-	// Start acquisition
-	camera->StartCapture();
->>>>>>> Exposure
-}
-
-// Destructor
-QtVmbViewer::~QtVmbViewer() {
-<<<<<<< HEAD
-	// Shutdown Vimba
-	VmbShutdown();
-}
-
-// Open the camera
-void QtVmbViewer::Open() {
-	// Query all static details of the first known camera
+	// Get the first known camera
 	VmbCameraInfo_t camera;
 	VmbUint32_t count;
 	VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
@@ -58,14 +20,16 @@ void QtVmbViewer::Open() {
 	VmbFeatureIntGet( handle, "PayloadSize", &payloadsize );
 }
 
-// Close the camera
-void QtVmbViewer::Close() {
+// Destructor
+VmbCamera::~VmbCamera() {
 	// Close the camera
 	VmbCameraClose( handle );
+	// Shutdown Vimba
+	VmbShutdown();
 }
 
 // Start acquisition
-void QtVmbViewer::StartCapture() {
+void VmbCamera::StartCapture() {
 	// Create the Qt image (grayscale)
 	image = new QImage( width, height, QImage::Format_Indexed8 );
 	// Create an indexed color table for the QImage
@@ -96,7 +60,7 @@ void QtVmbViewer::StartCapture() {
 }
 
 // Stop acquisition
-void QtVmbViewer::StopCapture() {
+void VmbCamera::StopCapture() {
 	// Stop acquisition
 	VmbFeatureCommandRun( handle, "AcquisitionStop" );
 	// Flush the frame queue
@@ -114,31 +78,29 @@ void QtVmbViewer::StopCapture() {
 	delete image;
 }
 
+// Get the camera exposure time in microseconds
+double VmbCamera::GetExposure() {
+	double exposure;
+	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
+	return exposure;
+}
+
+// Set the camera exposure time in microseconds
+void VmbCamera::SetExposure( double exposure ) {
+	VmbFeatureFloatSet( handle, "ExposureTimeAbs", exposure );
+}
+
 // The callback that gets executed on every filled frame
-void VMB_CALL QtVmbViewer::FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer ) {
+void VMB_CALL VmbCamera::FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer ) {
 	// Check frame status
 	if( frame_pointer->receiveStatus == VmbFrameStatusComplete ) {
-		// Get the camera viewer object in the frame context
-		QtVmbViewer* viewer = (QtVmbViewer*)frame_pointer->context[0];
+		// Get the camera object in the frame context
+		VmbCamera* camera = (VmbCamera*)frame_pointer->context[0];
 		// Copy the camera frame buffer to the Qt image
-		memcpy( viewer->image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
+		memcpy( camera->image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
 		// Emit the image ready signal
-		emit viewer->ImageReady();
+		emit camera->ImageReady();
 	}
 	// Requeue the frame
 	VmbCaptureFrameQueue( camera_handle , frame_pointer , &FrameDoneCallback );
-=======
-	// Stop acquisition
-	camera->StopCapture();
-	// Delete the camera
-	delete camera;
->>>>>>> Exposure
-}
-
-// Slot to get a new image from the camera and update the widget
-void QtVmbViewer::UpdateImage() {
-	// Set the image to the label
-	setPixmap( QPixmap::fromImage( *image ).scaled( width*0.3, height*0.3, Qt::KeepAspectRatio ) );
-	// Update the widget
-	update();
 }
