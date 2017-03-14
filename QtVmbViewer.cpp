@@ -13,15 +13,15 @@ QtVmbViewer::QtVmbViewer( QWidget *parent ) : QWidget( parent ),
 	layout->addWidget( slider );
 	layout->setSizeConstraint( QLayout::SetFixedSize );
 	// Create the camera
-	camera = new VmbCamera( "50-0503323406" );
-	// Connect the camera signal to get newly received images
-	connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
+	camera = new VmbCamera();
 	// Open the camera
 	camera->Open();
 	// Setup the slider according the camera exposure parameters
 	slider->setRange( camera->exposure_min, camera->exposure_max );
 	slider->setValue( camera->exposure );
 	slider->update();
+	// Connect the camera signal to get newly received images
+	connect( camera, &VmbCamera::ImageReady, this, &QtVmbViewer::UpdateImage );
 	// Connect the slider released signal to set the new camera exposure value
 	connect( slider, &QSlider::sliderReleased, this, &QtVmbViewer::SetExposure );
 	// Start acquisition

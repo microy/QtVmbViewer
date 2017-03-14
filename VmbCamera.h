@@ -1,8 +1,6 @@
 #ifndef VMBCAMERA_H
 #define VMBCAMERA_H
 
-// Standard dependency
-#include <string>
 // Vimba SDK dependency
 #include <VimbaC.h>
 // Qt dependency
@@ -17,7 +15,7 @@ class VmbCamera : public QObject {
 	// Public members
 	public :
 		// Construtor
-		VmbCamera( const char* camera_id, int frame_buffer_size=10 );
+		VmbCamera();
 		// Destructor
 		~VmbCamera();
 
@@ -36,8 +34,6 @@ class VmbCamera : public QObject {
 
 		// Handle to the camera
 		VmbHandle_t handle;
-		// Identification number of the camera
-		std::string id;
 		// Image parameters
 		VmbInt64_t width;
 		VmbInt64_t height;
@@ -46,8 +42,9 @@ class VmbCamera : public QObject {
 		double exposure;
 		double exposure_min;
 		double exposure_max;
+		// Frame buffer size
+		static const int frame_buffer_size = 10;
 		// Frame buffer
-		int frame_buffer_size;
 		VmbFrame_t* frame_buffer;
 		// Current camera image
 		QImage* image;

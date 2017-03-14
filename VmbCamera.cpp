@@ -1,8 +1,7 @@
 #include "VmbCamera.h"
-#include <cstdlib>
 
 // Construtor
-VmbCamera::VmbCamera(const char* camera_id , int frame_buffer_size) : id( camera_id ), frame_buffer_size( frame_buffer_size ) {
+VmbCamera::VmbCamera() {
 	// Initialize Vimba
 	VmbStartup();
 	// Send discovery packet to GigE cameras
@@ -17,8 +16,12 @@ VmbCamera::~VmbCamera() {
 
 // Open the camera
 void VmbCamera::Open() {
+	// Get the first known camera
+	VmbCameraInfo_t camera;
+	VmbUint32_t count;
+	VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
 	// Connect to the camera
-	VmbCameraOpen( id.c_str(), VmbAccessModeFull, &handle );
+	VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
 	// Adjust packet size automatically
 	VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
 	// Get image parameters
@@ -29,7 +32,6 @@ void VmbCamera::Open() {
 	VmbFeatureFloatGet( handle, "ExposureTimeAbs", &exposure );
 	VmbFeatureFloatRangeQuery( handle, "ExposureTimeAbs", &exposure_min, &exposure_max );
 }
-
 
 // Close the camera
 void VmbCamera::Close() {
