@@ -19,7 +19,7 @@ class QtVmbViewer : public QWidget {
 		// Destructor
 		~QtVmbViewer();
 	// Qt slots
-	public slots :
+	private slots :
 		// Slot to get the image from the camera and update the widget
 		void UpdateImage();
 		// Slot to update the camera exposure
