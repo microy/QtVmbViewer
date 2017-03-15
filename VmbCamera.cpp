@@ -99,7 +99,7 @@ void VmbCamera::SetExposure( double exposure ) const {
 }
 
 // Get the camera image
-const QImage* Image() const {
+const QImage* VmbCamera::Image() const {
 	return image;
 }
 
