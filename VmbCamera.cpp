@@ -59,7 +59,7 @@ VmbCamera::~VmbCamera() {
 }
 
 // Start acquisition
-void VmbCamera::StartCapture() {
+void VmbCamera::StartCapture() const {
 	// Announce the frames
 	for( int i=0; i<frame_buffer_size; i++ ) {
 		VmbFrameAnnounce( handle, &frame_buffer[i], sizeof( VmbFrame_t ) );
@@ -75,7 +75,7 @@ void VmbCamera::StartCapture() {
 }
 
 // Stop acquisition
-void VmbCamera::StopCapture() {
+void VmbCamera::StopCapture() const {
 	// Stop acquisition
 	VmbFeatureCommandRun( handle, "AcquisitionStop" );
 	// Flush the frame queue
