@@ -42,6 +42,8 @@ class VmbCamera : public QObject {
 		VmbFrame_t* frame_buffer;
 		// Current camera image
 		QImage* image;
+		// Vimba error
+		VmbError_t error;
 		// Function called by Vimba to receive the frame
 		static void VMB_CALL FrameDoneCallback( const VmbHandle_t camera_handle, VmbFrame_t* frame_pointer );
 };

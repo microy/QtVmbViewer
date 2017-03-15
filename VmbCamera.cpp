@@ -1,4 +1,5 @@
 #include "VmbCamera.h"
+#include <iostream>
 
 // Frame buffer size
 const int VmbCamera::frame_buffer_size = 5;
@@ -6,17 +7,32 @@ const int VmbCamera::frame_buffer_size = 5;
 // Construtor
 VmbCamera::VmbCamera() {
 	// Initialize Vimba
-	VmbStartup();
+	error = VmbStartup();
+	if( error != VmbErrorSuccess ) {
+		std::cerr << "Could not start Vimba system. Error code: " << error << '\n';
+	}
 	// Send discovery packet to GigE cameras
-	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
+	error = VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
+	if( error != VmbErrorSuccess ) {
+		std::cerr << "Could not ping GigE cameras over the network. Error code: " << error << '\n';
+	}
 	// Get the first known camera
 	VmbCameraInfo_t camera;
 	VmbUint32_t count;
-	VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
+	error = VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
+	if( (error != VmbErrorSuccess && error != VmbErrorMoreData) || count == 0 ) {
+		std::cerr << "Could not list cameras or no camera present. Error code: " << error << '\n';
+	}
 	// Connect to the camera
-	VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
+	error = VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
+	if( error != VmbErrorSuccess ) {
+		std::cerr << "Could not open camera. Error code: " << error << '\n';
+	}
 	// Adjust packet size automatically
-	VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
+	error = VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
+	if( error != VmbErrorSuccess ) {
+		std::cerr << "Could not adjust packet size. Error code: " << error << '\n';
+	}
 	// Get image parameters
 	VmbInt64_t width;
 	VmbInt64_t height;
@@ -46,7 +62,10 @@ VmbCamera::VmbCamera() {
 // Destructor
 VmbCamera::~VmbCamera() {
 	// Close the camera
-	VmbCameraClose( handle );
+	error = VmbCameraClose( handle );
+	if( error != VmbErrorSuccess ) {
+		std::cerr << "Could not close camera. Error code: " << error << '\n';
+	}
 	// Shutdown Vimba
 	VmbShutdown();
 	// Free the frame buffer
