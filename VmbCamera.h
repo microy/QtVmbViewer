@@ -27,7 +27,7 @@ class VmbCamera : public QObject {
 		// Set the camera exposure value (in microseconds)
 		void SetExposure( double exposure ) const;
 		// Get the camera image
-		const QImage* Image() const;
+		const QImage& Image() const;
 	// Qt signal
 	signals :
 		// Signal to tell a new image is received
@@ -41,7 +41,7 @@ class VmbCamera : public QObject {
 		// Frame buffer
 		VmbFrame_t* frame_buffer;
 		// Current camera image
-		QImage* image;
+		QImage image;
 		// Vimba error
 		VmbError_t error;
 		// Function called by Vimba to receive the frame

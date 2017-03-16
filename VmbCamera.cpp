@@ -41,11 +41,11 @@ VmbCamera::VmbCamera() {
 	VmbFeatureIntGet( handle, "Height", &height );
 	VmbFeatureIntGet( handle, "PayloadSize", &payload_size );
 	// Create the Qt image (grayscale)
-	image = new QImage( width, height, QImage::Format_Indexed8 );
+	image = QImage( width, height, QImage::Format_Indexed8 );
 	// Create an indexed color table for the Qt image
-	image->setColorCount( 256 );
+	image.setColorCount( 256 );
 	for( int i=0; i<256; i++ ) {
-		image->setColor( i, qRgb(i, i, i) );
+		image.setColor( i, qRgb(i, i, i) );
 	}
 	// Initialize the frame buffer
 	frame_buffer = (VmbFrame_t*)malloc( frame_buffer_size * sizeof(VmbFrame_t) );
@@ -73,8 +73,6 @@ VmbCamera::~VmbCamera() {
 		free( frame_buffer[i].buffer );
 	}
 	free( frame_buffer );
-	// Delete the Qt image
-	delete image;
 }
 
 // Start acquisition
@@ -118,7 +116,7 @@ void VmbCamera::SetExposure( double exposure ) const {
 }
 
 // Get the camera image
-const QImage* VmbCamera::Image() const {
+const QImage& VmbCamera::Image() const {
 	return image;
 }
 
@@ -129,7 +127,7 @@ void VMB_CALL VmbCamera::FrameDoneCallback( const VmbHandle_t camera_handle, Vmb
 		// Get the camera object in the frame context
 		VmbCamera* camera = (VmbCamera*)frame_pointer->context[0];
 		// Copy the camera frame buffer to the Qt image
-		memcpy( camera->image->bits(), frame_pointer->buffer, frame_pointer->bufferSize );
+		memcpy( camera->image.bits(), frame_pointer->buffer, frame_pointer->bufferSize );
 		// Emit the image ready signal
 		emit camera->ImageReady();
 	}

@@ -42,7 +42,7 @@ QtVmbViewer::~QtVmbViewer() {
 // Slot to get a new image from the camera and update the widget
 void QtVmbViewer::UpdateImage() {
 	// Set the image to the label
-	label->setPixmap( QPixmap::fromImage( *camera->Image() ) );
+	label->setPixmap( QPixmap::fromImage( camera->Image() ) );
 	// Scale the label
 	label->resize( 0.3 * label->pixmap()->size() );
 	// Update the widget
