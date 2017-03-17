@@ -31,8 +31,11 @@ void VmbCamera::Startup() {
 	VmbCameraInfo_t camera;
 	VmbUint32_t count;
 	error = VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
-	if( (error != VmbErrorSuccess && error != VmbErrorMoreData) || count == 0 ) {
-		std::cerr << "Could not list cameras or no camera present. Error code: " << error << '\n';
+	if( error != VmbErrorSuccess && error != VmbErrorMoreData ) {
+		std::cerr << "Could not list cameras. Error code: " << error << '\n';
+	}
+	if( count == 0 ) {
+		std::cerr << "No camera present.\n";
 	}
 	// Connect to the camera
 	error = VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
