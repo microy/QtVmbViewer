@@ -4,6 +4,9 @@
 // Frame buffer size
 const int VmbCamera::frame_buffer_size = 5;
 
+// Vimba error
+VmbError_t error;
+
 // Construtor
 VmbCamera::VmbCamera() {
 }
