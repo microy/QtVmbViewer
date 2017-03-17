@@ -71,7 +71,7 @@ void VmbCamera::Startup() {
 }
 
 // Shutdown the camera and Vimba
-void VmbCamera::Shutdown() const {
+void VmbCamera::Shutdown() {
 	// Close the camera
 	error = VmbCameraClose( handle );
 	if( error != VmbErrorSuccess ) {
