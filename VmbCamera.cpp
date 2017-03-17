@@ -6,6 +6,14 @@ const int VmbCamera::frame_buffer_size = 5;
 
 // Construtor
 VmbCamera::VmbCamera() {
+}
+
+// Destructor
+VmbCamera::~VmbCamera() {
+}
+
+// Initialize Vimba and the camera
+void VmbCamera::Startup() {
 	// Initialize Vimba
 	error = VmbStartup();
 	if( error != VmbErrorSuccess ) {
@@ -59,8 +67,8 @@ VmbCamera::VmbCamera() {
 	}
 }
 
-// Destructor
-VmbCamera::~VmbCamera() {
+// Shutdown the camera and Vimba
+void VmbCamera::Shutdown() const {
 	// Close the camera
 	error = VmbCameraClose( handle );
 	if( error != VmbErrorSuccess ) {

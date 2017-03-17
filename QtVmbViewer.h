@@ -15,7 +15,7 @@ class QtVmbViewer : public QWidget {
 	// Public members
 	public :
 		// Constructor
-		QtVmbViewer( QWidget *parent = 0 );
+		QtVmbViewer( QWidget* parent = 0 );
 		// Destructor
 		~QtVmbViewer();
 	// Qt slots
@@ -31,7 +31,7 @@ class QtVmbViewer : public QWidget {
 		// Slider to set the camera exposure time
 		QSlider* slider;
 		// Allied Vision camera
-		VmbCamera* camera;
+		VmbCamera camera;
 };
 
 #endif // QTVMBVIEWER_H

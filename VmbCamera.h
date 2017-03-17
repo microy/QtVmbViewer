@@ -18,6 +18,10 @@ class VmbCamera : public QObject {
 		VmbCamera();
 		// Destructor
 		~VmbCamera();
+		// Initialize the camera
+		void Startup();
+		// Release the camera
+		void Shutdown();
 		// Start the acquisition
 		void StartCapture() const;
 		// Stop the acquisition
