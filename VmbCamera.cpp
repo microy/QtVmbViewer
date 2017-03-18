@@ -1,11 +1,7 @@
 #include "VmbCamera.h"
-#include <iostream>
 
 // Frame buffer size
 const int VmbCamera::frame_buffer_size = 5;
-
-// Vimba error
-VmbError_t error;
 
 // Construtor
 VmbCamera::VmbCamera() {
@@ -18,35 +14,17 @@ VmbCamera::~VmbCamera() {
 // Initialize Vimba and the camera
 void VmbCamera::Startup() {
 	// Initialize Vimba
-	error = VmbStartup();
-	if( error != VmbErrorSuccess ) {
-		std::cerr << "Could not start Vimba system. Error code: " << error << '\n';
-	}
+	VmbStartup();
 	// Send discovery packet to GigE cameras
-	error = VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
-	if( error != VmbErrorSuccess ) {
-		std::cerr << "Could not ping GigE cameras over the network. Error code: " << error << '\n';
-	}
+	VmbFeatureCommandRun( gVimbaHandle, "GeVDiscoveryAllOnce" );
 	// Get the first known camera
 	VmbCameraInfo_t camera;
 	VmbUint32_t count;
-	error = VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
-	if( error != VmbErrorSuccess && error != VmbErrorMoreData ) {
-		std::cerr << "Could not list cameras. Error code: " << error << '\n';
-	}
-	if( count == 0 ) {
-		std::cerr << "No camera present.\n";
-	}
+	VmbCamerasList( &camera, 1, &count, sizeof(VmbCameraInfo_t) );
 	// Connect to the camera
-	error = VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
-	if( error != VmbErrorSuccess ) {
-		std::cerr << "Could not open camera. Error code: " << error << '\n';
-	}
+	VmbCameraOpen( camera.cameraIdString, VmbAccessModeFull, &handle );
 	// Adjust packet size automatically
-	error = VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
-	if( error != VmbErrorSuccess ) {
-		std::cerr << "Could not adjust packet size. Error code: " << error << '\n';
-	}
+	VmbFeatureCommandRun( handle, "GVSPAdjustPacketSize" );
 	// Get image parameters
 	VmbInt64_t width;
 	VmbInt64_t height;
@@ -76,10 +54,7 @@ void VmbCamera::Startup() {
 // Shutdown the camera and Vimba
 void VmbCamera::Shutdown() {
 	// Close the camera
-	error = VmbCameraClose( handle );
-	if( error != VmbErrorSuccess ) {
-		std::cerr << "Could not close camera. Error code: " << error << '\n';
-	}
+	VmbCameraClose( handle );
 	// Shutdown Vimba
 	VmbShutdown();
 	// Free the frame buffer
