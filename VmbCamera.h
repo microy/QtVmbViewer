@@ -14,10 +14,6 @@ class VmbCamera : public QObject {
 	Q_OBJECT
 	// Public members
 	public :
-		// Construtor
-		VmbCamera();
-		// Destructor
-		~VmbCamera();
 		// Initialize the camera
 		void Startup();
 		// Release the camera

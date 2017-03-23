@@ -3,14 +3,6 @@
 // Frame buffer size
 const int VmbCamera::frame_buffer_size = 5;
 
-// Construtor
-VmbCamera::VmbCamera() {
-}
-
-// Destructor
-VmbCamera::~VmbCamera() {
-}
-
 // Initialize Vimba and the camera
 void VmbCamera::Startup() {
 	// Initialize Vimba
