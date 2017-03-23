@@ -28,9 +28,8 @@ void VmbCamera::Startup() {
 	image = QImage( width, height, QImage::Format_Indexed8 );
 	// Create an indexed color table for the Qt image
 	image.setColorCount( 256 );
-	for( int i=0; i<256; i++ ) {
+	for( int i=0; i<256; i++ )
 		image.setColor( i, qRgb(i, i, i) );
-	}
 	// Initialize the frame buffer
 	frame_buffer = (VmbFrame_t*)malloc( frame_buffer_size * sizeof(VmbFrame_t) );
 	// Allocate the frames
@@ -50,24 +49,21 @@ void VmbCamera::Shutdown() {
 	// Shutdown Vimba
 	VmbShutdown();
 	// Free the frame buffer
-	for( int i=0; i<frame_buffer_size; i++ ) {
+	for( int i=0; i<frame_buffer_size; i++ )
 		free( frame_buffer[i].buffer );
-	}
 	free( frame_buffer );
 }
 
 // Start acquisition
 void VmbCamera::StartCapture() const {
 	// Announce the frames
-	for( int i=0; i<frame_buffer_size; i++ ) {
-		VmbFrameAnnounce( handle, &frame_buffer[i], sizeof( VmbFrame_t ) );
-	}
+	for( int i=0; i<frame_buffer_size; i++ )
+		VmbFrameAnnounce( handle, &frame_buffer[i], sizeof(VmbFrame_t) );
 	// Start capture engine
 	VmbCaptureStart( handle );
 	// Queue frames and register callback
-	for( int i=0; i<frame_buffer_size; i++ ) {
+	for( int i=0; i<frame_buffer_size; i++ )
 		VmbCaptureFrameQueue( handle, &frame_buffer[i], &FrameDoneCallback );
-	}
 	// Start acquisition
 	VmbFeatureCommandRun( handle, "AcquisitionStart" );
 }
